@@ -85,8 +85,8 @@ int populate_envlinked_list(info_t *f)
 	list_t *nd = NULL;
 	size_t a;
 
-	for (a = 0; cpy_env[a]; a++)
-		add_node_to_end(&nd, cpy_env[a], 0);
+	for (a = 0; environ[a]; a++)
+		add_node_to_end(&nd, environ[a], 0);
 	f->list_env = nd;
 	return (0);
 }
