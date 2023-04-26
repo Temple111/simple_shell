@@ -1,5 +1,5 @@
-#ifndef _SHELL_H_
-#define _SHELL_H_
+#ifndef _ESHELL_H_
+#define _ESHELL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,9 +13,9 @@
 #include <errno.h>
 
 /* for read/write buffers */
-#define READ_BUF_SIZE 1024
-#define WRITE_BUF_SIZE 1024
-#define BUF_FLUSH -1
+#define READ_BUFF_SIZE 1024
+#define WRITE_BUFF_SIZE 1024
+#define BUFF_FLUSH -1
 
 /* for command chaining */
 #define CMD_NORM	0
@@ -34,18 +34,18 @@
 #define HIST_FILE	".simple_shell_history"
 #define HIST_MAX	4096
 
-extern char **environ;
+extern char **cpy_env;
 
 
 /**
  * struct liststr - singly linked list
- * @num: the number field
+ * @data: the number field
  * @str: a string
  * @next: points to the next node
  */
 typedef struct liststr
 {
-	int num;
+	int data;
 	char *str;
 	struct liststr *next;
 } list_t;
@@ -53,46 +53,46 @@ typedef struct liststr
 /**
  *struct passinfo - contains pseudo-arguements to pass into a function,
  *		allowing uniform prototype for function pointer struct
- *@arg: a string generated from getline containing arguements
+ *@argu: a string generated from getline containing arguements
  *@argv: an array of strings generated from arg
- *@path: a string path for the current command
+ *@str_path: a string path for the current command
  *@argc: the argument count
- *@line_count: the error count
- *@err_num: the error code for exit()s
- *@linecount_flag: if on count this line of input
- *@fname: the program filename
- *@env: linked list local copy of environ
- *@environ: custom modified copy of environ from LL env
- *@history: the history node
- *@alias: the alias node
- *@env_changed: on if environ was changed
- *@status: the return status of the last exec'd command
- *@cmd_buf: address of pointer to cmd_buf, on if chaining
- *@cmd_buf_type: CMD_type ||, &&, ;
- *@readfd: the fd from which to read line input
- *@histcount: the history line number count
+ *@err_count: the error count
+ *@err_code: the error code for exit()s
+ *@lineinput_count: if on count this line of input
+ *@f_name: the program filename
+ *@list_env: linked list local copy of environ
+ *@cpy_env: custom modified copy of environ from LL env
+ *@hist_nd: the history node
+ *@alias_nd: the alias node
+ *@environ_changed: on if environ was changed
+ *@ret_status: the return status of the last exec'd command
+ *@cmd_buff: address of pointer to cmd_buf, on if chaining
+ *@cmd_buff_type: CMD_type ||, &&, ;
+ *@read_fd: the fd from which to read line input
+ *@hist_count: the history line number count
  */
 typedef struct passinfo
 {
-	char *arg;
+	char *argu;
 	char **argv;
-	char *path;
+	char *str_path;
 	int argc;
-	unsigned int line_count;
-	int err_num;
-	int linecount_flag;
-	char *fname;
-	list_t *env;
-	list_t *history;
-	list_t *alias;
-	char **environ;
-	int env_changed;
-	int status;
+	unsigned int err_count;
+	int err_code;
+	int lineinput_count;
+	char *f_name;
+	list_t *list_env;
+	list_t *hist_nd;
+	list_t *alias_nd;
+	char **cpy_env;
+	int environ_changed;
+	int ret_status;
 
-	char **cmd_buf; /* pointer to cmd ; chain buffer, for memory mangement */
-	int cmd_buf_type; /* CMD_type ||, &&, ; */
-	int readfd;
-	int histcount;
+	char **cmd_buff; /* pointer to cmd ; chain buffer, for memory mangement */
+	int cmd_buff_type; /* CMD_type ||, &&, ; */
+	int read_fd;
+	int hist_count;
 } info_t;
 
 #define INFO_INIT \
@@ -101,12 +101,12 @@ typedef struct passinfo
 
 /**
  *struct builtin - contains a builtin string and related function
- *@type: the builtin command flag
+ *@flag_type: the builtin command flag
  *@func: the function
  */
 typedef struct builtin
 {
-	char *type;
+	char *flag_type;
 	int (*func)(info_t *);
 } builtin_table;
 

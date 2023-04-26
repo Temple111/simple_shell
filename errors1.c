@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * _erratoi - converts a string to an integer
@@ -37,9 +37,9 @@ int _erratoi(char *st)
  */
 void print_errmessage(info_t *f, char *estrg)
 {
-	_wputs(f->fname);
+	_wputs(f->f_name);
 	_wputs(": ");
-	print_decimal(f->line_count, STDERR_FILENO);
+	print_decimal(f->err_count, STDERR_FILENO);
 	_wputs(": ");
 	_wputs(f->argv[0]);
 	_wputs(": ");

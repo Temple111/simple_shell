@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * **towstr- splits a string into words. Repeat delimiters are ignored
@@ -9,7 +9,7 @@
 
 char **towstr(char *string, char *del)
 {
-	int a, b, c, d, numwords = 0;
+	int a, b, c, d, numwd = 0;
 	char **sm;
 
 	if (string == NULL || string[0] == 0)
@@ -18,14 +18,14 @@ char **towstr(char *string, char *del)
 		del = " ";
 	for (a = 0; string[a] != '\0'; a++)
 		if (!delim(string[a], del) && (delim(string[a + 1], del) || !string[a + 1]))
-			numwords++;
+			numwd++;
 
-	if (numwords == 0)
+	if (numwd == 0)
 		return (NULL);
-	sm = malloc((1 + numwords) * sizeof(char *));
+	sm = malloc((1 + numwd) * sizeof(char *));
 	if (!sm)
 		return (NULL);
-	for (a = 0, b = 0; b < numwords; b++)
+	for (a = 0, b = 0; b < numwd; b++)
 	{
 		while (delim(string[a], del))
 			a++;
@@ -56,7 +56,7 @@ char **towstr(char *string, char *del)
  */
 char **towstr2(char *string, char del)
 {
-	int a, b, c, d, numwords = 0;
+	int a, b, c, d, numwd = 0;
 	char **sm;
 
 	if (string == NULL || string[0] == 0)
@@ -64,13 +64,13 @@ char **towstr2(char *string, char del)
 	for (a = 0; string[a] != '\0'; a++)
 		if ((string[a] != del && string[a + 1] == del) ||
 		    (string[a] != del && !string[a + 1]) || string[a + 1] == del)
-			numwords++;
-	if (numwords == 0)
+			numwd++;
+	if (numwd == 0)
 		return (NULL);
-	sm = malloc((1 + numwords) * sizeof(char *));
+	sm = malloc((1 + numwd) * sizeof(char *));
 	if (!sm)
 		return (NULL);
-	for (a = 0, b = 0; b < numwords; b++)
+	for (a = 0, b = 0; b < numwd; b++)
 	{
 		while (string[a] == del && string[a] != del)
 			a++;

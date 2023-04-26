@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * main - entry point
@@ -30,12 +30,12 @@ int main(int ag, char **av)
 				_wputs(": 0: Can't open ");
 				_wputs(av[1]);
 				_wputchar('\n');
-				_wputchar(BUF_FLUSH);
+				_wputchar(BUFF_FLUSH);
 				exit(127);
 			}
 			return (EXIT_FAILURE);
 		}
-		f->readfd = op;
+		f->read_fd = op;
 	}
 	populate_envlinked_list(f);
 	read_hist(f);

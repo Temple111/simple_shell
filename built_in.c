@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * _shexit - exits the shell
@@ -9,23 +9,23 @@
  */
 int _shexit(info_t *f)
 {
-	int exit_check;
+	int exit;
 
 	if (f->argv[1])  /* If there is an exit arguement */
 	{
-		exit_check = _erratoi(f->argv[1]);
-		if (exit_check == -1)
+		exit = _erratoi(f->argv[1]);
+		if (exit  == -1)
 		{
-			f->status = 2;
+			f->ret_status = 2;
 			print_errmessage(f, "Illegal number: ");
 			_wputs(f->argv[1]);
 			_wputchar('\n');
 			return (1);
 		}
-		f->err_num = _erratoi(f->argv[1]);
+		f->err_code = _erratoi(f->argv[1]);
 		return (-2);
 	}
-	f->err_num = -1;
+	f->err_code = -1;
 	return (-2);
 }
 

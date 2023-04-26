@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * _lenstr - returns the length of a string
@@ -23,7 +23,7 @@ int _lenstr(char *string)
  * @string1: the first strang
  * @string2: the second strang
  *
- * Return: negative if string1 < string2, positive if s1 > s2, zero if s1 == s2
+ * Return: 0 for success
  */
 int _cmpstr(char *string1, char *string2)
 {

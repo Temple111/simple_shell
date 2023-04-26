@@ -128,18 +128,19 @@ int delete_node_at_index(list_t **head_ref, int index)
 }
 /**
  * free_List - frees all nodes of a list
- * @head: address of pointer to head node
+ * @h_ptr: address of pointer to head node
  *
  * Return:0 for success
  */
-void free_List(list_t *head)
+void free_List(list_t **h_ptr)
 {
-	list_t *temp;
+	list_t *current = *h_ptr;
 
-	while (head != NULL)
+	while (current != NULL)
 	{
-		temp = head;
-		head = head->next;
-		free(temp);
+		list_t *next = current->next;
+		free(current);
+		current = next:
 	}
+	*h_ptr = NULL;
 }

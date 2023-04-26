@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * input_buff - buffers chained commands
@@ -13,9 +13,8 @@ ssize_t input_buff(info_t *f, char **buff, size_t *l)
 	ssize_t rd = 0;
 	size_t len_ph = 0;
 
-	if (!*l) /* if nothing left in the buffer, fill it */
+	if (!*l)
 	{
-		/*bfree((void **)info->cmd_buf);*/
 		free(*buff);
 		*buff = NULL;
 		signal(SIGINT, sigintHandler);
@@ -28,16 +27,15 @@ ssize_t input_buff(info_t *f, char **buff, size_t *l)
 		{
 			if ((*buff)[rd - 1] == '\n')
 			{
-				(*buff)[rd - 1] = '\0'; /* remove trailing newline */
+				(*buff)[rd - 1] = '\0';
 				rd--;
 			}
-			f->linecount_flag = 1;
+			f->lineinput_count = 1;
 			replace_hash(*buff);
-			build_hist_linkedlist(f, *buff, f->histcount++);
-			/* if (_strchr(*buf, ';')) is this a command chain? */
+			build_hist_linkedlist(f, *buff, f->hist_count++);
 			{
 				*l = rd;
-				f->cmd_buf = buff;
+				f->cmd_buff = buff;
 			}
 		}
 	}
@@ -52,41 +50,41 @@ ssize_t input_buff(info_t *f, char **buff, size_t *l)
  */
 ssize_t get_input(info_t *f)
 {
-	static char *buff; /* the ';' command chain buffer */
+	static char *buff;
 	static size_t a, b, l;
 	ssize_t rd = 0;
-	char **buf_ph = &(f->arg), *ph;
+	char **buff_ph = &(f->argu), *ph;
 
-	_putchar(BUF_FLUSH);
+	_putchar(BUFF_FLUSH);
 	rd = input_buff(f, &buff, &l);
 	if (rd == -1) /* EOF */
 		return (-1);
-	if (l)	/* we have commands left in the chain buffer */
+	if (l)
 	{
-		b = a; /* init new iterator to current buf position */
-		ph = buff + a; /* get pointer for return */
+		b = a;
+		ph = buff + a;
 
 		cont_chain(f, buff, &b, a, l);
-		while (b < l) /* iterate to semicolon or end */
+		while (b < l)
 		{
 			if (del_chain(f, buff, &b))
 				break;
 			b++;
 		}
 
-		a = b + 1; /* increment past nulled ';'' */
-		if (a >= l) /* reached end of buffer? */
+		a = b + 1;
+		if (a >= l)
 		{
-			a = l = 0; /* reset position and length */
-			f->cmd_buf_type = CMD_NORM;
+			a = l = 0;
+			f->cmd_buff_type = CMD_NORM;
 		}
 
-		*buf_ph = ph; /* pass back pointer to current command position */
-		return (_lenstr(ph)); /* return length of current command */
+		*buff_ph = ph;
+		return (_lenstr(ph));
 	}
 
-	*buf_ph = buff; /* else not a chain, pass back buffer from _getline() */
-	return (rd); /* return length of buffer from _getline() */
+	*buff_ph = buff;
+	return (rd);
 }
 
 /**
@@ -103,7 +101,7 @@ ssize_t read_buff(info_t *f, char *buff, size_t *a)
 
 	if (*a)
 		return (0);
-	rd = read(f->readfd, buff, READ_BUF_SIZE);
+	rd = read(f->read_fd, buff, READ_BUFF_SIZE);
 	if (rd >= 0)
 		*a = rd;
 	return (rd);
@@ -119,15 +117,15 @@ ssize_t read_buff(info_t *f, char *buff, size_t *a)
  */
 int _getline(info_t *f, char **pt, size_t *l)
 {
-	static char buff[READ_BUF_SIZE];
+	static char buff[READ_BUFF_SIZE];
 	static size_t a, len;
-	size_t k;
-	ssize_t rd = 0, s = 0;
+	size_t d;
+	ssize_t rd = 0, sh = 0;
 	char *ph = NULL, *new_ph = NULL, *ch;
 
 	ph = *pt;
 	if (ph && l)
-		s = *l;
+		sh = *l;
 	if (a == len)
 		a = len = 0;
 
@@ -136,24 +134,24 @@ int _getline(info_t *f, char **pt, size_t *l)
 		return (-1);
 
 	ch = _chrstr(buff + a, '\n');
-	k = ch ? 1 + (unsigned int)(ch - buff) : len;
-	new_ph = my_realloc(ph, s, s ? s + k : k + 1);
+	d = ch ? 1 + (unsigned int)(ch - buff) : len;
+	new_ph = my_realloc(ph, sh, sh ? sh + d : d + 1);
 	if (!new_ph) /* MALLOC FAILURE! */
 		return (ph ? free(ph), -1 : -1);
 
-	if (s)
-		_catnstr(new_ph, buff + a, k - a);
+	if (sh)
+		_catnstr(new_ph, buff + a, d - a);
 	else
-		_cpynstr(new_ph, buff + a, k - a + 1);
+		_cpynstr(new_ph, buff + a, d - a + 1);
 
-	s += k - a;
-	a = k;
+	sh += d - a;
+	a = d;
 	ph = new_ph;
 
 	if (l)
-		*l = s;
+		*l = sh;
 	*pt = ph;
-	return (s);
+	return (sh);
 }
 
 /**
@@ -166,5 +164,5 @@ void sigintHandler(__attribute__((unused))int sig_num)
 {
 	_puts("\n");
 	_puts("$ ");
-	_putchar(BUF_FLUSH);
+	_putchar(BUFF_FLUSH);
 }

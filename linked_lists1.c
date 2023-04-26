@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * count_Nodes - determines length of linked list
@@ -67,7 +67,7 @@ size_t print_list_element(const list_t *hd)
 
 	while (hd)
 	{
-		_puts(convert_num(hd->num, 10, 0));
+		_puts(convert_num(hd->data, 10, 0));
 		_putchar(':');
 		_putchar(' ');
 		_puts(hd->str ? hd->str : "(nil)");

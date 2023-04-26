@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * _curr_env - prints the current environment
@@ -8,7 +8,7 @@
  */
 int _curr_env(info_t *f)
 {
-	print_list_str(f->env);
+	print_list_str(f->list_env);
 	return (0);
 }
 
@@ -21,7 +21,7 @@ int _curr_env(info_t *f)
  */
 char *_get_env(info_t *f, const char *varname)
 {
-	list_t *nd = f->env;
+	list_t *nd = f->list_env;
 	char *ph;
 
 	while (nd)
@@ -85,8 +85,8 @@ int populate_envlinked_list(info_t *f)
 	list_t *nd = NULL;
 	size_t a;
 
-	for (a = 0; environ[a]; a++)
-		add_node_to_end(&nd, environ[a], 0);
-	f->env = nd;
+	for (a = 0; cpy_env[a]; a++)
+		add_node_to_end(&nd, cpy_env[a], 0);
+	f->list_env = nd;
 	return (0);
 }

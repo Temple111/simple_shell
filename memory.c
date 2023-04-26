@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * free_and_null - frees a pointer and NULLs the address

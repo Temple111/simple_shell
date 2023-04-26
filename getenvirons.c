@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * get_env - returns the string array copy of our environ
@@ -8,13 +8,13 @@
  */
 char **get_env(info_t *f)
 {
-	if (!f->environ || f->env_changed)
+	if (!f->cpy_env || f->environ_changed)
 	{
-		f->environ = list_to_array(f->env);
-		f->env_changed = 0;
+		f->cpy_env = list_to_array(f->list_env);
+		f->environ_changed = 0;
 	}
 
-	return (f->environ);
+	return (f->cpy_env);
 }
 
 /**
@@ -26,7 +26,7 @@ char **get_env(info_t *f)
  */
 int _unsetenv(info_t *f, char *val)
 {
-	list_t *nd = f->env;
+	list_t *nd = f->list_env;
 	size_t a = 0;
 	char *ph;
 
@@ -38,15 +38,15 @@ int _unsetenv(info_t *f, char *val)
 		ph = starts_hay(nd->str, val);
 		if (ph && *ph == '=')
 		{
-			f->env_changed = delete_node_at_index(&(f->env), a);
+			f->environ_changed = delete_node_at_index(&(f->list_env), a);
 			a = 0;
-			nd = f->env;
+			nd = f->list_env;
 			continue;
 		}
 		nd = nd->next;
 		a++;
 	}
-	return (f->env_changed);
+	return (f->environ_changed);
 }
 
 /**
@@ -73,7 +73,7 @@ int _setenv(info_t *f, char *va, char *val)
 	_cpystr(buff, va);
 	_catstr(buff, "=");
 	_catstr(buff, val);
-	nd = f->env;
+	nd = f->list_env;
 	while (nd)
 	{
 		ph = starts_hay(nd->str, va);
@@ -81,13 +81,13 @@ int _setenv(info_t *f, char *va, char *val)
 		{
 			free(nd->str);
 			nd->str = buff;
-			f->env_changed = 1;
+			f->environ_changed = 1;
 			return (0);
 		}
 		nd = nd->next;
 	}
-	add_node_to_end(&(f->env), buff, 0);
+	add_node_to_end(&(f->list_env), buff, 0);
 	free(buff);
-	f->env_changed = 1;
+	f->environ_changed = 1;
 	return (0);
 }

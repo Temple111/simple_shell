@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * clear_info - initializes info_t struct
@@ -6,9 +6,9 @@
  */
 void clear_info(info_t *f)
 {
-	f->arg = NULL;
+	f->argu = NULL;
 	f->argv = NULL;
-	f->path = NULL;
+	f->str_path = NULL;
 	f->argc = 0;
 }
 
@@ -21,17 +21,17 @@ void set_info(info_t *f, char **av)
 {
 	int a = 0;
 
-	f->fname = av[0];
-	if (f->arg)
+	f->f_name = av[0];
+	if (f->argu)
 	{
-		f->argv = towstr(f->arg, " \t");
+		f->argv = towstr(f->argu, " \t");
 		if (!f->argv)
 		{
 
 			f->argv = malloc(sizeof(char *) * 2);
 			if (f->argv)
 			{
-				f->argv[0] = _dupstr(f->arg);
+				f->argv[0] = _dupstr(f->argu);
 				f->argv[1] = NULL;
 			}
 		}
@@ -53,22 +53,22 @@ void free_info(info_t *f, int every)
 {
 	free_string_array(f->argv);
 	f->argv = NULL;
-	f->path = NULL;
+	f->str_path = NULL;
 	if (every)
 	{
-		if (!f->cmd_buf)
-			free(f->arg);
-		if (f->env)
-			free_list(&(f->env));
-		if (f->history)
-			free_list(&(f->history));
-		if (f->alias)
-			free_list(&(f->alias));
-		free_string_array(f->environ);
-			f->environ = NULL;
-		free_and_null((void **)f->cmd_buf);
-		if (f->readfd > 2)
-			close(f->readfd);
-		_putchar(BUF_FLUSH);
+		if (!f->cmd_buff)
+			free(f->argu);
+		if (f->list_env)
+			free_list(&(f->list_env));
+		if (f->hist_nd)
+			free_list(&(f->hist_nd));
+		if (f->alias_nd)
+			free_list(&(f->alias_nd));
+		free_string_array(f->cpy_env);
+			f->cpy_env = NULL;
+		free_and_null((void **)f->cmd_buff);
+		if (f->read_fd > 2)
+			close(f->read_fd);
+		_putchar(BUFF_FLUSH);
 	}
 }

@@ -15,7 +15,7 @@ int hsh(info_t *f, char **av)
 	while (r != -1 && builtin_ret != -2)
 	{
 		clear_info(f);
-		if (interactive(f))
+		if (shell_inter(f))
 			_puts("$ ");
 		_wputchar(BUF_FLUSH);
 		r = get_input(f);
@@ -26,13 +26,13 @@ int hsh(info_t *f, char **av)
 			if (builtin_ret == -1)
 				find_cmd(f);
 		}
-		else if (interactive(f))
+		else if (shell_inter(f))
 			_putchar('\n');
 		free_info(f, 0);
 	}
 	write_hist(f);
 	free_info(f, 1);
-	if (!interactive(f) && f->status)
+	if (!shell_inter(f) && f->status)
 		exit(f->status);
 	if (builtin_ret == -2)
 	{
@@ -68,7 +68,7 @@ int find_builtin(info_t *f)
 	};
 
 	for (a = 0; builtintbl[a].type; a++)
-		if (_cmpstr(f->argv[0], builtintbl[f].type) == 0)
+		if (_cmpstr(f->argv[0], builtintbl[a].type) == 0)
 		{
 			f->line_count++;
 			built_in_ret = builtintbl[a].func(f);
@@ -108,7 +108,7 @@ void find_cmd(info_t *f)
 	}
 	else
 	{
-		if ((interactive(f) || _get_env(f, "PATH=")
+		if ((shell_inter(f) || _get_env(f, "PATH=")
 			|| f->argv[0][0] == '/') && is_cmd(f, f->argv[0]))
 			fork_cmd(f);
 		else if (*(f->arg) != '\n')

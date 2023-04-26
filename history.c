@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * get_hist_file - gets the history file
@@ -43,12 +43,12 @@ int write_hist(info_t *f)
 	free(file_n);
 	if (pn == -1)
 		return (-1);
-	for (nd = f->history; nd; nd = nd->next)
+	for (nd = f->hist_nd; nd; nd = nd->next)
 	{
 		_putsfd(nd->str, pn);
 		_putfd('\n', pn);
 	}
-	_putfd(BUF_FLUSH, pn);
+	_putfd(BUFF_FLUSH, pn);
 	close(pn);
 	return (1);
 }
@@ -95,11 +95,11 @@ int read_hist(info_t *f)
 	if (end != a)
 		build_hist_linkedlist(f, buff + end, l_count++);
 	free(buff);
-	f->histcount = l_count;
-	while (f->histcount-- >= HIST_MAX)
-		delete_node_at_index(&(f->history), 0);
+	f->hist_count = l_count;
+	while (f->hist_count-- >= HIST_MAX)
+		delete_node_at_index(&(f->hist_nd), 0);
 	renumb_hist(f);
-	return (f->histcount);
+	return (f->hist_count);
 }
 
 /**
@@ -114,12 +114,12 @@ int build_hist_linkedlist(info_t *f, char *buff, int l_count)
 {
 	list_t *nd = NULL;
 
-	if (f->history)
-		nd = f->history;
+	if (f->hist_nd)
+		nd = f->hist_nd;
 	add_node_to_end(&nd, buff, l_count);
 
-	if (!f->history)
-		f->history = nd;
+	if (!f->hist_nd)
+		f->hist_nd = nd;
 	return (0);
 }
 
@@ -131,13 +131,13 @@ int build_hist_linkedlist(info_t *f, char *buff, int l_count)
  */
 int renumb_hist(info_t *f)
 {
-	list_t *nd = f->history;
+	list_t *nd = f->hist_nd;
 	int a = 0;
 
 	while (nd)
 	{
-		nd->num = a++;
+		nd->data = a++;
 		nd = nd->next;
 	}
-	return (f->histcount = a);
+	return (f->hist_count = a);
 }

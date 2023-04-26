@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * hsh - main shell loop
@@ -17,7 +17,7 @@ int hsh(info_t *f, char **ag)
 		clear_info(f);
 		if (interactive(f))
 			_puts("$ ");
-		_wputchar(BUF_FLUSH);
+		_wputchar(BUFF_FLUSH);
 		c = get_input(f);
 		if (c != -1)
 		{
@@ -32,13 +32,13 @@ int hsh(info_t *f, char **ag)
 	}
 	write_hist(f);
 	free_info(f, 1);
-	if (!interactive(f) && f->status)
-		exit(f->status);
+	if (!interactive(f) && f->ret_status)
+		exit(f->ret_status);
 	if (builtin_rt == -2)
 	{
-		if (f->err_num == -1)
-			exit(f->status);
-		exit(f->err_num);
+		if (f->err_code == -1)
+			exit(f->ret_status);
+		exit(f->err_code);
 	}
 	return (builtin_rt);
 }
@@ -67,10 +67,10 @@ int find_built_in(info_t *f)
 		{NULL, NULL}
 	};
 
-	for (a = 0; builtintbl[a].type; a++)
-		if (_cmpstr(f->argv[0], builtintbl[a].type) == 0)
+	for (a = 0; builtintbl[a].flag_type; a++)
+		if (_cmpstr(f->argv[0], builtintbl[a].flag_type) == 0)
 		{
-			f->line_count++;
+			f->err_count++;
 			built_in_rt = builtintbl[a].func(f);
 			break;
 		}
@@ -88,14 +88,14 @@ void cmd_find(info_t *f)
 	char *path = NULL;
 	int a, c;
 
-	f->path = f->argv[0];
-	if (f->linecount_flag == 1)
+	f->str_path = f->argv[0];
+	if (f->lineinput_count == 1)
 	{
-		f->line_count++;
-		f->linecount_flag = 0;
+		f->err_count++;
+		f->lineinput_count = 0;
 	}
-	for (a = 0, c = 0; f->arg[a]; a++)
-		if (!delim(f->arg[a], " \t\n"))
+	for (a = 0, c = 0; f->argu[a]; a++)
+		if (!delim(f->argu[a], " \t\n"))
 			c++;
 	if (!c)
 		return;
@@ -103,7 +103,7 @@ void cmd_find(info_t *f)
 	path = find_command(f, _get_env(f, "PATH="), f->argv[0]);
 	if (path)
 	{
-		f->path = path;
+		f->str_path = path;
 		cmd_find(f);
 	}
 	else
@@ -111,9 +111,9 @@ void cmd_find(info_t *f)
 		if ((interactive(f) || _get_env(f, "PATH=")
 			|| f->argv[0][0] == '/') && is_cmd(f, f->argv[0]))
 			cmd_fork(f);
-		else if (*(f->arg) != '\n')
+		else if (*(f->argu) != '\n')
 		{
-			f->status = 127;
+			f->ret_status = 127;
 			print_errmessage(f, "not found\n");
 		}
 	}
@@ -138,7 +138,7 @@ void cmd_fork(info_t *f)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(f->path, f->argv, get_env(f)) == -1)
+		if (execve(f->str_path, f->argv, get_env(f)) == -1)
 		{
 			free_info(f, 1);
 			if (errno == EACCES)
@@ -149,11 +149,11 @@ void cmd_fork(info_t *f)
 	}
 	else
 	{
-		wait(&(f->status));
-		if (WIFEXITED(f->status))
+		wait(&(f->ret_status));
+		if (WIFEXITED(f->ret_status))
 		{
-			f->status = WEXITSTATUS(f->status);
-			if (f->status == 126)
+			f->ret_status = WEXITSTATUS(f->ret_status);
+			if (f->ret_status == 126)
 				print_errmessage(f, "Permission denied\n");
 		}
 	}

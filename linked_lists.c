@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * add_Node - adds a node to the start of the list
@@ -18,7 +18,7 @@ list_t *add_Node(list_t **hd, const char *st, int number)
 	if (!new_hd)
 		return (NULL);
 	mem_set((void *)new_hd, 0, sizeof(list_t));
-	new_hd->num = number;
+	new_hd->data = number;
 	if (st)
 	{
 		new_hd->str = _dupstr(st);
@@ -53,7 +53,7 @@ list_t *add_node_to_end(list_t **hd, const char *st, int number)
 	if (!new_nd)
 		return (NULL);
 	mem_set((void *)new_nd, 0, sizeof(list_t));
-	new_nd->num = number;
+	new_nd->data = number;
 	if (st)
 	{
 		new_nd->str = _dupstr(st);

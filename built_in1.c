@@ -1,15 +1,13 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
- * _disphist - displays the history list, one command by line, preceded
- *              with line numbers, starting at 0.
- * @f: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
+ * _disphist - displays the history list, starting at 0.
+ * @f: Structure containing potential arguments.
  *  Return: Always 0
  */
 int _disphist(info_t *f)
 {
-	print_list_element(f->history);
+	print_list_element(f->hist_nd);
 	return (0);
 }
 
@@ -30,8 +28,8 @@ int alias_to_string(info_t *f, char *st)
 		return (1);
 	ch = *ph;
 	*ph = 0;
-	rt = delete_node_at_index(&(f->alias),
-		Node_Index(f->alias, find_Node(f->alias, st, -1)));
+	rt = delete_node_at_index(&(f->alias_nd),
+		Node_Index(f->alias_nd, find_Node(f->alias_nd, st, -1)));
 	*ph = ch;
 	return (rt);
 }
@@ -54,7 +52,7 @@ int alias_set(info_t *f, char *s)
 		return (alias_to_string(f, s));
 
 	alias_to_string(f, s);
-	return (add_node_to_end(&(f->alias), s, 0) == NULL);
+	return (add_node_to_end(&(f->alias_nd), s, 0) == NULL);
 }
 
 /**
@@ -94,7 +92,7 @@ int _alias_mimic(info_t *f)
 
 	if (f->argc == 1)
 	{
-		nd = f->alias;
+		nd = f->alias_nd;
 		while (nd)
 		{
 			print_alias_string(nd);
@@ -108,7 +106,7 @@ int _alias_mimic(info_t *f)
 		if (ph)
 			alias_set(f, f->argv[a]);
 		else
-			print_alias_string(find_Node(f->alias, f->argv[a], '='));
+			print_alias_string(find_Node(f->alias_nd, f->argv[a], '='));
 	}
 
 	return (0);

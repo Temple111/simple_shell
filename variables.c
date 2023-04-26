@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * del_chain - test if current char in buffer is a chain delimeter
@@ -16,18 +16,18 @@ int del_chain(info_t *f, char *buff, size_t *ptr)
 	{
 		buff[a] = 0;
 		a++;
-		f->cmd_buf_type = CMD_OR;
+		f->cmd_buff_type = CMD_OR;
 	}
 	else if (buff[a] == '&' && buff[a + 1] == '&')
 	{
 		buff[a] = 0;
 		a++;
-		f->cmd_buf_type = CMD_AND;
+		f->cmd_buff_type = CMD_AND;
 	}
-	else if (buff[a] == ';') /* found end of this command */
+	else if (buff[a] == ';')
 	{
-		buff[a] = 0; /* replace semicolon with null */
-		f->cmd_buf_type = CMD_CHAIN;
+		buff[a] = 0;
+		f->cmd_buff_type = CMD_CHAIN;
 	}
 	else
 		return (0);
@@ -49,17 +49,17 @@ void cont_chain(info_t *f, char *buff, size_t *ptr, size_t a, size_t l)
 {
 	size_t b = *ptr;
 
-	if (f->cmd_buf_type == CMD_AND)
+	if (f->cmd_buff_type == CMD_AND)
 	{
-		if (f->status)
+		if (f->ret_status)
 		{
 			buff[a] = 0;
 			b = l;
 		}
 	}
-	if (f->cmd_buf_type == CMD_OR)
+	if (f->cmd_buff_type == CMD_OR)
 	{
-		if (!f->status)
+		if (!f->ret_status)
 		{
 			buff[a] = 0;
 			b = l;
@@ -83,7 +83,7 @@ int _alias(info_t *f)
 
 	for (a = 0; a < 10; a++)
 	{
-		nd = find_Node(f->alias, f->argv[0], '=');
+		nd = find_Node(f->alias_nd, f->argv[0], '=');
 		if (!nd)
 			return (0);
 		free(f->argv[0]);
@@ -117,7 +117,7 @@ int var_replace(info_t *f)
 		if (!_cmpstr(f->argv[a], "$?"))
 		{
 			str_replace(&(f->argv[a]),
-				_dupstr(convert_num(f->status, 10, 0)));
+				_dupstr(convert_num(f->ret_status, 10, 0)));
 			continue;
 		}
 		if (!_cmpstr(f->argv[a], "$$"))
@@ -126,7 +126,7 @@ int var_replace(info_t *f)
 				_dupstr(convert_num(getpid(), 10, 0)));
 			continue;
 		}
-		nd = find_Node(f->env, &f->argv[a][1], '=');
+		nd = find_Node(f->list_env, &f->argv[a][1], '=');
 		if (nd)
 		{
 			str_replace(&(f->argv[a]),

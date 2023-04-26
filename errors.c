@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  *_wputs - prints an input string
@@ -29,14 +29,14 @@ void _wputs(char *st)
 int _wputchar(char ch)
 {
 	static int a;
-	static char buff[WRITE_BUF_SIZE];
+	static char buff[WRITE_BUFF_SIZE];
 
-	if (ch == BUF_FLUSH || a >= WRITE_BUF_SIZE)
+	if (ch == BUFF_FLUSH || a >= WRITE_BUFF_SIZE)
 	{
 		write(2, buff, a);
 		a = 0;
 	}
-	if (ch != BUF_FLUSH)
+	if (ch != BUFF_FLUSH)
 		buff[a++] = ch;
 	return (1);
 }
@@ -52,14 +52,14 @@ int _wputchar(char ch)
 int _putfd(char ch, int file_d)
 {
 	static int a;
-	static char buff[WRITE_BUF_SIZE];
+	static char buff[WRITE_BUFF_SIZE];
 
-	if (ch == BUF_FLUSH || a >= WRITE_BUF_SIZE)
+	if (ch == BUFF_FLUSH || a >= WRITE_BUFF_SIZE)
 	{
 		write(file_d, buff, a);
 		a = 0;
 	}
-	if (ch != BUF_FLUSH)
+	if (ch != BUFF_FLUSH)
 		buff[a++] = ch;
 	return (1);
 }

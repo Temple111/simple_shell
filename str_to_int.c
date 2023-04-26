@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * interactive - returns true if shell is interactive mode
@@ -8,7 +8,7 @@
  */
 int interactive(info_t *info)
 {
-	return (isatty(STDIN_FILENO) && info->readfd <= 2);
+	return (isatty(STDIN_FILENO) && info->read_fd <= 2);
 }
 
 /**
@@ -47,7 +47,7 @@ int isAlphabetic(int ch)
 
 int str_to_int(char *st)
 {
-	int j, sign = 1, fg = 0, output;
+	int j, sign = 1, fg = 0, outpt;
 	unsigned int rst = 0;
 
 	for (j = 0;  st[j] != '\0' && fg != 2; j++)
@@ -66,9 +66,9 @@ int str_to_int(char *st)
 	}
 
 	if (sign == -1)
-		output = -rst;
+		outpt = -rst;
 	else
-		output = rst;
+		outpt = rst;
 
-	return (output);
+	return (outpt);
 }

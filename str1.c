@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "eshell.h"
 
 /**
  * _cpystr - copies a string
@@ -74,15 +74,15 @@ void _puts(char *string)
 int _putchar(char ch)
 {
 	static int ai;
-	static char buff[WRITE_BUF_SIZE];
+	static char buff[WRITE_BUFF_SIZE];
 
-	if (ch == BUF_FLUSH || ai >= WRITE_BUF_SIZE)
+	if (ch == BUFF_FLUSH || ai >= WRITE_BUFF_SIZE)
 	{
 		write(1, buff, ai);
 		ai = 0;
 	}
-	if (ch != BUF_FLUSH)
-		
+	if (ch != BUFF_FLUSH)
+
 		buff[ai++] = ch;
 	return (1);
 }

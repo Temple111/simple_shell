@@ -126,7 +126,13 @@ typedef struct builtin
 	int (*func)(info_t *);
 } builtin_table;
 /* hsh */
+int loophsh( char **);
+
+/* shell_loop.c */
 int hsh(info_t *f, char **av);
+int find_builtin(info_t *f);
+void find_cmd(info_t *f);
+void fork_cmd(info_t *f);
 
 /* paser.c header file */
 char *find_command(info_t *f, char *strpath, char *cmd);
@@ -227,7 +233,7 @@ list_t *add_Node(list_t **h,char *st, int data);
 list_t *add_node_to_end(list_t **head_ref, const char *st, int data);
 void print_list_str(list_t *list);
 int delete_node_at_index(list_t **head_ref, int index);
-void free_List(list_t *head);
+void free_List(list_t **head);
 
 /* linked_list1.c */
 int count_Nodes(list_t *head);
