@@ -11,7 +11,7 @@ int _shexit(info_t *f)
 {
 	int exit;
 
-	if (f->argv[1])  /* If there is an exit arguement */
+	if (f->argv[1])
 	{
 		exit = _erratoi(f->argv[1]);
 		if (exit  == -1)
@@ -22,10 +22,10 @@ int _shexit(info_t *f)
 			_wputchar('\n');
 			return (1);
 		}
-		f->err_code = _erratoi(f->argv[1]);
+		f->err_num = _erratoi(f->argv[1]);
 		return (-2);
 	}
-	f->err_code = -1;
+	f->err_num = -1;
 	return (-2);
 }
 
